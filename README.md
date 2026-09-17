@@ -180,7 +180,9 @@ hunting for someone else's numbers inside the source.
 
 ### Scheduled runs
 
-[.github/workflows/job_agent.yml](.github/workflows/job_agent.yml) runs the agent daily at 07:00 UTC and on manual dispatch. Provider keys come from repository secrets; non-secret tuning is set as literals in the workflow — an unset GitHub secret expands to an empty string, which used to crash `int()` at import time.
+[.github/workflows/job_agent.yml](.github/workflows/job_agent.yml) runs the agent on manual dispatch, with a daily 07:00 UTC schedule that is
+commented out until the provider and Telegram secrets are configured.
+Provider keys come from repository secrets; non-secret tuning is set as literals in the workflow — an unset GitHub secret expands to an empty string, which used to crash `int()` at import time.
 
 ---
 
