@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Job Search Agent Dashboard</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="app-container">
+        <header class="header glass">
+            <div class="logo">
+                <div class="logo-icon"></div>
+                <h1>Agent Control</h1>
+            </div>
+            <div class="header-actions">
+                <div id="status-indicator" class="status-indicator idle">
+                    <span class="dot"></span>
+                    <span class="status-text">Idle</span>
+                </div>
+                <button id="btn-run-en-async" class="btn" style="background:var(--accbg); color:var(--acc); border:1px solid var(--acc); margin-right: 10px;">Launch (EN + Async)</button>
+                <button id="btn-run" class="btn btn-primary">Launch Agent</button>
+                <button id="btn-stop" class="btn" style="margin-left:10px; display:none;">Stop</button>
+            </div>
+        </header>
+
+        <main class="main-content">
+            <div class="metrics-row">
+                <div class="metric-card glass">
+                    <div class="metric-title">Total Jobs Seen</div>
+                    <div class="metric-value" id="val-seen">--</div>
+                </div>
+                <div class="metric-card glass">
+                    <div class="metric-title">High Score (>75)</div>
+                    <div class="metric-value highlight" id="val-high">--</div>
+                </div>
+                <div class="metric-card glass">
+                    <div class="metric-title">Auto Rejected</div>
+                    <div class="metric-value" id="val-rejected">--</div>
+                </div>
+            </div>
+
+            <div class="dashboard-grid">
+                <!-- Live Terminal Panel -->
+                <section class="panel terminal-panel glass">
+                    <div class="panel-header">
+                        <h2>Live Mission Control</h2>
+                        <div class="active-task" id="active-task">Waiting...</div>
+                    </div>
+                    <div class="terminal-window" id="terminal-window">
+                        <!-- Logs injected here -->
+                    </div>
+                </section>
+
+                <!-- Top Jobs Panel -->
+                <section class="panel jobs-panel glass">
+                    <div class="panel-header">
+                        <h2>Top Matches</h2>
+                        <button class="btn btn-icon" id="btn-refresh" title="Refresh">↻</button>
+                    </div>
+                    <div class="jobs-list" id="jobs-list">
+                        <!-- Jobs injected here -->
+                        <div class="loading-state">Loading jobs...</div>
+                    </div>
+                </section>
+
+                <!-- Funnel Panel: почему вакансии отсеялись -->
+                <section class="panel funnel-panel glass">
+                    <div class="panel-header">
+                        <h2>Why jobs were dropped</h2>
+                    </div>
+                    <div class="funnel-list" id="funnel-list">
+                        <div class="loading-state">Loading funnel...</div>
+                    </div>
+                </section>
+            </div>
+        </main>
+    </div>
+
+    <script src="/static/app.js"></script>
+</body>
+</html>

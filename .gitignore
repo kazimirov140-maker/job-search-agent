@@ -1,0 +1,25 @@
+.env
+__pycache__/
+*.pyc
+sa-key.json
+
+# Локальная база и логи — не должны попадать в репозиторий
+jobs.db*
+.env.backup_*
+.env.local
+secrets.json
+*.log
+*.bak
+.vscode/
+.mimo*
+*.exe
+
+# Личные данные и внутренняя спецификация — не публикуем
+PROJECT_SPEC_AND_PROMPTS.md
+resume_en.txt
+resume_ru.txt
+AGENTS.md
+.agents/
+
+# Личный профиль кандидата — образец в profile.example.md
+profile.md

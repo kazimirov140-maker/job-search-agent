@@ -1,0 +1,77 @@
+name: AI Job Search Agent
+
+on:
+  # Каждый день в 09:00 по местному времени (07:00 UTC)
+  schedule:
+    - cron: "0 7 * * *"
+  workflow_dispatch:
+
+jobs:
+  run-agent:
+    name: Run Job Search Agent
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    # Несекретные настройки задаются литералами.
+    # Раньше они приходили через ${{ secrets.* }}, а GitHub подставляет пустую
+    # строку вместо несозданного секрета. Из-за этого int("") бросал
+    # ValueError на импорте config и прогон умирал, не начавшись.
+    env:
+      EMAIL_DAYS_BACK: "7"
+      MAX_EMAILS: "15"
+      MAX_DESCRIPTION_CHARS: "2200"
+      MAX_EMAIL_BODY_CHARS: "3500"
+      MAX_LLM_JOBS_PER_RUN: "40"
+      LLM_REQUEST_DELAY: "2.0"
+      MAX_CONSECUTIVE_LLM_FAILURES: "5"
+      SCORE_THRESHOLD_SILENT: "60"
+      SCORE_THRESHOLD_NOTIFY: "75"
+      SCORE_THRESHOLD_PRIORITY: "85"
+      REMOTE_ONLY: "true"
+      ALLOW_HYBRID: "false"
+      BLOCK_BELARUS: "true"
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: "pip"
+
+      # Без этого шага база дедупликации создаётся заново на каждом прогоне:
+      # одни и те же вакансии оцениваются повторно, очередь никогда не
+      # разгребается, а квота LLM тратится впустую.
+      - name: Restore jobs database
+        uses: actions/cache@v4
+        with:
+          path: jobs.db
+          key: jobs-db-${{ github.run_id }}
+          restore-keys: |
+            jobs-db-
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Run AI Job Search Agent
+        env:
+          OPENROUTER_API_KEY:   ${{ secrets.OPENROUTER_API_KEY }}
+          TELEGRAM_BOT_TOKEN:   ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID:     ${{ secrets.TELEGRAM_CHAT_ID }}
+          GMAIL_EMAIL:          ${{ secrets.GMAIL_EMAIL }}
+          GMAIL_APP_PASSWORD:   ${{ secrets.GMAIL_APP_PASSWORD }}
+          OPENROUTER_MODEL:     ${{ secrets.OPENROUTER_MODEL }}
+          # Резервные провайдеры: у каждого свой бесплатный лимит.
+          # Незаданный секрет даёт пустую строку — провайдер просто
+          # пропускается, ошибки не будет.
+          GROQ_API_KEY:         ${{ secrets.GROQ_API_KEY }}
+          GEMINI_API_KEY:       ${{ secrets.GEMINI_API_KEY }}
+          # Множественное число — секрет с несколькими ключами через
+          # запятую. Каждый ключ даёт свой дневной лимит, цепочка их
+          # ротирует при исчерпании.
+          GEMINI_API_KEYS:      ${{ secrets.GEMINI_API_KEYS }}
+          CEREBRAS_API_KEY:     ${{ secrets.CEREBRAS_API_KEY }}
+        run: python main.py
+
