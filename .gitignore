@@ -14,12 +14,6 @@ secrets.json
 .mimo*
 *.exe
 
-# Личные данные и внутренняя спецификация — не публикуем
-PROJECT_SPEC_AND_PROMPTS.md
-resume_en.txt
-resume_ru.txt
-AGENTS.md
-.agents/
-
-# Личный профиль кандидата — образец в profile.example.md
+# Профиль кандидата — личные данные оператора.
+# Образец для заполнения: profile.example.md
 profile.md
